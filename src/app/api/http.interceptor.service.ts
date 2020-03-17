@@ -19,7 +19,7 @@ export class HttpInterceptorService implements HttpInterceptor {
         if (request.url === baseURL) {
             if (!this.cows.length) {
                 this.cows = data.result.map((cow, index) => ({
-                    id: index,
+                    id: index + 1,
                     ...cow
                 }));
             }
@@ -80,8 +80,10 @@ export class HttpInterceptorService implements HttpInterceptor {
                         })
                     );
                 }
-                const cowToDeleteIndex = this.getCowIndexById(request.body.id);
-                if (cowToDeleteIndex) {
+                const cowToDeleteIndex = this.getCowIndexById(
+                    +request.params.get("id")
+                );
+                if (cowToDeleteIndex !== -1) {
                     this.cows.splice(cowToDeleteIndex, 1);
                 }
                 // Always returning 204 (no content) on delete, no mater if

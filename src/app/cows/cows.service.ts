@@ -23,7 +23,7 @@ export class CowsService {
             .get<ICow>(baseURL, {
                 params: { id: String(id) }
             })
-            .pipe(catchError(this.handleError<ICow>("postCow", null)));
+            .pipe(catchError(this.handleError<ICow>("getCow", null)));
     }
 
     postCow(cow: ICow): Observable<ICow> {
@@ -35,7 +35,7 @@ export class CowsService {
     patchCow(cow: ICow): Observable<ICow> {
         return this.http
             .patch<ICow>(baseURL, cow)
-            .pipe(catchError(this.handleError<ICow>("postCow", null)));
+            .pipe(catchError(this.handleError<ICow>("patchCow", null)));
     }
 
     deleteCow(id: number): Observable<ICow> {
@@ -43,7 +43,7 @@ export class CowsService {
             .delete<ICow>(baseURL, {
                 params: { id: String(id) }
             })
-            .pipe(catchError(this.handleError<ICow>("postCow", null)));
+            .pipe(catchError(this.handleError<ICow>("deleteCow", null)));
     }
 
     /**
