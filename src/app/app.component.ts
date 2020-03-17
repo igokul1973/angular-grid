@@ -20,7 +20,6 @@ export class AppComponent implements OnInit {
     public ping() {
         this.cowsService.getCows().subscribe(
             data => {
-                debugger;
                 console.log(data);
             },
             error => {

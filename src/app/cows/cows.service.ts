@@ -13,7 +13,6 @@ export class CowsService {
     constructor(private http: HttpClient) {}
 
     getCows(): Observable<ICow[]> {
-        debugger;
         return this.http
             .get<ICow[]>(baseURL)
             .pipe(catchError(this.handleError<ICow[]>("postCow", [])));
