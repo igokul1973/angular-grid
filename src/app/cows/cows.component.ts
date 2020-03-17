@@ -23,7 +23,9 @@ export class CowsComponent implements OnInit {
         "daysInLactation",
         "ageInDays",
         "startDateTime",
-        "reportingDateTime"
+        "reportingDateTime",
+        "edit",
+        "delete"
     ];
     constructor(private cowsService: CowsService) {}
 
