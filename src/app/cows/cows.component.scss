@@ -1,3 +1,23 @@
+.add-cow-form-header {
+    text-align: center;
+    padding-top: 2rem;
+}
+
 table {
     width: 100%;
+    .mat-header-cell,
+    .mat-cell {
+        text-align: center;
+        justify-content: center;
+    }
+    &.add-cow-form {
+        padding-bottom: 3rem;
+    }
+    .mat-form-field {
+        max-width: 120px;
+    }
+}
+
+.mat-icon {
+    cursor: pointer;
 }

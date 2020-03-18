@@ -1,5 +1,5 @@
 export default interface ICow {
-    id: number;
+    id?: number;
     healthIndex?: number;
     endDate?: number | null;
     minValueDateTime?: number;

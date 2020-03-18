@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Output, EventEmitter, Input } from "@angular/core";
 
 @Component({
     selector: "app-root",
@@ -6,6 +6,12 @@ import { Component } from "@angular/core";
     styleUrls: ["./app.component.scss"]
 })
 export class AppComponent {
+    public showAddCowForm: boolean = false;
     title = "Cows Grid";
-    addCow(cow) {}
+    addCowClicked() {
+        this.showAddCowForm = true;
+    }
+    addCowRemoved() {
+        this.showAddCowForm = false;
+    }
 }

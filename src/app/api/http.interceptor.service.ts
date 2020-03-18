@@ -42,9 +42,14 @@ export class HttpInterceptorService implements HttpInterceptor {
                     );
                 }
                 const lastID = this.getLastId(this.cows);
-                const newCow = { id: lastID + 1, ...request.body };
+                const newCow = { ...request.body, id: lastID + 1 };
                 this.cows.push(newCow);
-                return newCow;
+                return of(
+                    new HttpResponse({
+                        status: 200,
+                        body: newCow
+                    })
+                );
             }
             if (request.method === "PATCH") {
                 if (!request.body) {
@@ -69,7 +74,12 @@ export class HttpInterceptorService implements HttpInterceptor {
                     ...request.body
                 };
                 this.cows[cowToUpdateIndex] = updatedCow;
-                return updatedCow;
+                return of(
+                    new HttpResponse({
+                        status: 200,
+                        body: updatedCow
+                    })
+                );
             }
             if (request.method === "DELETE") {
                 if (!request.params.get("id")) {

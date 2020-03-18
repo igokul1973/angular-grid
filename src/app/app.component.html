@@ -2,13 +2,14 @@
     <mat-toolbar-row>
         <span>{{ title }}</span>
         <span class="example-spacer"></span>
-        <mat-icon
-            class="example-icon"
-            aria-hidden="false"
-            aria-label="Example heart icon"
-        >
+        <mat-icon *ngIf="!showAddCowForm" class="example-icon" aria-hidden="false" aria-label="Example heart icon"
+            title="Add a cow" (click)="addCowClicked()">
             add
+        </mat-icon>
+        <mat-icon *ngIf="showAddCowForm" class="example-icon" aria-hidden="false" aria-label="Example heart icon"
+            title="Cancel add a cow" (click)="addCowRemoved()">
+            remove
         </mat-icon>
     </mat-toolbar-row>
 </mat-toolbar>
-<app-cows></app-cows>
+<app-cows [showAddCowForm]="showAddCowForm" (cancelAddCowForm)="addCowRemoved()"></app-cows>

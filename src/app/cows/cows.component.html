@@ -1,3 +1,250 @@
+<!-- *ngIf="showAddCowForm" -->
+<!-- Add cow table -->
+<h2 *ngIf="showAddCowForm" class="add-cow-form-header">Add cow form</h2>
+<table *ngIf="showAddCowForm" mat-table [dataSource]="newCows" class="mat-elevation-z8 add-cow-form">
+    <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+    <!-- Health index Column -->
+    <ng-container matColumnDef="healthIndex">
+        <th mat-header-cell *matHeaderCellDef>Health index</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <input [value]="element.healthIndex" [(ngModel)]="element.healthIndex" matInput
+                    placeholder="Enter health index" [formControl]="healthIndex" />
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <!-- End date Column -->
+    <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef>End date</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <mat-label>Choose an end date</mat-label>
+                <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="element.endDate" />
+                <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #endDatePicker></mat-datepicker>
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <!-- Min value datetime Column -->
+    <ng-container matColumnDef="minValueDateTime">
+        <th mat-header-cell *matHeaderCellDef>Min value datetime</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <mat-label>Choose min value date</mat-label>
+                <input matInput [matDatepicker]="minValueDateTimePicker" [(ngModel)]="element.minValueDateTime" />
+                <mat-datepicker-toggle matSuffix [for]="minValueDateTimePicker"></mat-datepicker-toggle>
+                <mat-datepicker #minValueDateTimePicker></mat-datepicker>
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <!-- Type Column -->
+    <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <input [value]="element.type" matInput placeholder="Enter type" [(ngModel)]="element.type"
+                    [formControl]="type" required />
+                <mat-error *ngIf="type.invalid">{{
+                    getRequiredErrorMessage("type")
+                }}</mat-error>
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <!-- Cow ID Column -->
+    <ng-container matColumnDef="cowId">
+        <th mat-header-cell *matHeaderCellDef>Cow ID</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <input [value]="element.cowId" matInput placeholder="Enter cow ID" [(ngModel)]="element.cowId"
+                    [formControl]="cowId" required />
+                <mat-error *ngIf="cowId.invalid">{{
+                    getRequiredErrorMessage("cowId")
+                }}</mat-error>
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <!-- Animal ID Column -->
+    <ng-container matColumnDef="animalId">
+        <th mat-header-cell *matHeaderCellDef>Animal ID</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <input [value]="element.animalId" matInput placeholder="Enter animal ID" [formControl]="animalId"
+                    [(ngModel)]="element.animalId" required />
+                <mat-error *ngIf="animalId.invalid">{{
+                    getRequiredErrorMessage("animalId")
+                }}</mat-error>
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <!-- Event ID Column -->
+    <ng-container matColumnDef="eventId">
+        <th mat-header-cell *matHeaderCellDef>Event ID</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <input [value]="element.eventId" matInput placeholder="Enter event ID" [(ngModel)]="element.eventId"
+                    [formControl]="eventId" required />
+                <mat-error *ngIf="eventId.invalid">
+                    {{getRequiredErrorMessage("eventId")}}
+                </mat-error>
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <!-- Deletable Column -->
+    <ng-container matColumnDef="deletable">
+        <th mat-header-cell *matHeaderCellDef>Deletable</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <mat-select matInput ([value])="element.deletable" [formControl]="deletable"
+                    [(ngModel)]="element.deletable" placeholder="Select if deletable">
+                    <mat-option value="1">True</mat-option>
+                    <mat-option value="0">False</mat-option>
+                </mat-select>
+                <mat-error *ngIf="eventId.invalid">
+                    {{getRequiredErrorMessage("deletable")}}
+                </mat-error>
+            </mat-form-field>
+            {{ element.deletable }}
+        </td>
+    </ng-container>
+
+    <!-- Lactation Number Column -->
+    <ng-container matColumnDef="lactationNumber">
+        <th mat-header-cell *matHeaderCellDef>Lactation Number</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <input [value]="element.lactationNumber" matInput placeholder="Enter event ID"
+                    [(ngModel)]="element.lactationNumber" [formControl]="lactationNumber" required />
+                <mat-error *ngIf="lactationNumber.invalid">
+                    {{getRequiredErrorMessage("lactationNumber")}}
+                </mat-error>
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <!-- Days in Lactation Column -->
+    <ng-container matColumnDef="daysInLactation">
+        <th mat-header-cell *matHeaderCellDef>Days in Lactation</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <input [value]="element.daysInLactation" matInput placeholder="Enter days in lactation"
+                    [(ngModel)]="element.daysInLactation" [formControl]="daysInLactation" required />
+                <mat-error *ngIf="daysInLactation.invalid">
+                    {{getRequiredErrorMessage("daysInLactation")}}
+                </mat-error>
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <!-- Age in days Column -->
+    <ng-container matColumnDef="ageInDays">
+        <th mat-header-cell *matHeaderCellDef>Age in days</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <input [value]="element.ageInDays" matInput placeholder="Enter age in days" [formControl]="ageInDays"
+                    [(ngModel)]="element.ageInDays" required />
+                <mat-error *ngIf="ageInDays.invalid">
+                    {{getRequiredErrorMessage("ageInDays")}}
+                </mat-error>
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <!-- Start datetime Column -->
+    <ng-container matColumnDef="startDateTime">
+        <th mat-header-cell *matHeaderCellDef>Start datetime</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <mat-label>Choose start date</mat-label>
+                <input matInput [matDatepicker]="startDateTimePicker" [(ngModel)]="element.startDateTime"
+                    [value]="element.startDateTime" required />
+                <mat-datepicker-toggle matSuffix [for]="startDateTimePicker"></mat-datepicker-toggle>
+                <mat-datepicker #startDateTimePicker></mat-datepicker>
+                <mat-error *ngIf="startDateTime.invalid">
+                    {{getRequiredErrorMessage("startDateTime")}}
+                </mat-error>
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <!-- Reporting datetime Column -->
+    <ng-container matColumnDef="reportingDateTime">
+        <th mat-header-cell *matHeaderCellDef>Reporting datetime</th>
+        <td mat-cell *matCellDef="let element">
+            <mat-form-field>
+                <mat-label>Choose reporting date</mat-label>
+                <input matInput [matDatepicker]="reportingDateTimePicker" [(ngModel)]="element.reportingDateTime"
+                    [value]="element.reportingDateTime" required />
+                <mat-datepicker-toggle matSuffix [for]="reportingDateTimePicker"></mat-datepicker-toggle>
+                <mat-datepicker #reportingDateTimePicker></mat-datepicker>
+                <mat-error *ngIf="reportingDateTime.invalid">
+                    {{getRequiredErrorMessage("reportingDateTime")}}
+                </mat-error>
+            </mat-form-field>
+        </td>
+    </ng-container>
+
+    <!-- Submit Form -->
+    <ng-container matColumnDef="submit">
+        <th mat-header-cell *matHeaderCellDef>Submit</th>
+        <td mat-cell *matCellDef="let element">
+            <button mat-raised-button (click)="submitAddCowForm(element)">
+                <mat-icon color="accent">done</mat-icon>
+            </button>
+        </td>
+    </ng-container>
+    [disabled]="type.invalid || cowId.invalid || animalId.invalid || eventId.invalid || animalId.invalid ||
+    deletable.invalid || lactationNumber.invalid || daysInLactation.invalid || ageInDays.invalid"
+
+    <!-- Delete Column -->
+    <ng-container matColumnDef="cancel">
+        <th mat-header-cell *matHeaderCellDef>Cancel</th>
+        <td mat-cell *matCellDef="let element" (click)="cancelAddCow()">
+            <mat-icon color="warn">
+                cancel
+            </mat-icon>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef=" displayedNewCowFormColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedNewCowFormColumns"></tr>
+</table>
+
+<!-- <div>
+    Type: {{type.invalid }}
+    <hr>
+    Cow ID: {{cowId.invalid}}
+    <hr>
+    Animal ID: {{ animalId.invalid }}
+    <hr>
+    Event Id: {{eventId.invalid}}
+    <hr>
+    Animal Id: {{ animalId.invalid}}
+    <hr>
+    ageInDays: {{ageInDays.invalid}}
+    <hr>
+    Deletable: {{deletable.invalid}}
+    <hr>
+    lactationNumber: {{getJson(lactationNumber)}}
+    <hr>
+    daysInLactation: {{getJson(daysInLactation)}}
+    <hr>
+    startDateTime: {{getJson(startDateTime)}}
+    <hr>
+    reportingDateTime: {{getJson(reportingDateTime)}}
+    <hr>
+
+</div> -->
+
+<!-- Grid -->
 <table mat-table [dataSource]="cows" class="mat-elevation-z8">
     <!--- Note that these columns can be defined in any order.
         The actual rendered columns are set as a property on the row definition" -->
@@ -116,23 +363,6 @@
         </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedGridColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedGridColumns"></tr>
 </table>
-
-<!--
-
-      "healthIndex": 77,
-      "endDate": null,
-      "minValueDateTime": 1514840400,
-      "type": "systemHealth",
-      "cowId": 910,
-      "animalId": "961",
-      "eventId": 34716,
-      "deletable": false,
-      "lactationNumber": 0,
-      "daysInLactation": 770,
-      "ageInDays": 770,
-      "startDateTime": 1514836800,
-      "reportingDateTime": 1514843103
--->
