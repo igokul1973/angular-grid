@@ -1,6 +1,6 @@
 <!-- *ngIf="showAddCowForm" -->
 <!-- Add cow table -->
-<h2 *ngIf="showAddCowForm" class="add-cow-form-header">Add cow form</h2>
+<h2 *ngIf="showAddCowForm" class="header">Add cow form</h2>
 <table *ngIf="showAddCowForm" mat-table [dataSource]="newCows" class="mat-elevation-z8 add-cow-form">
     <!--- Note that these columns can be defined in any order.
         The actual rendered columns are set as a property on the row definition" -->
@@ -112,7 +112,6 @@
                     {{getRequiredErrorMessage("deletable")}}
                 </mat-error>
             </mat-form-field>
-            {{ element.deletable }}
         </td>
     </ng-container>
 
@@ -196,7 +195,7 @@
     <ng-container matColumnDef="submit">
         <th mat-header-cell *matHeaderCellDef>Submit</th>
         <td mat-cell *matCellDef="let element">
-            <button mat-raised-button (click)="submitAddCowForm(element)">
+            <button mat-raised-button (click)="addCow(element)">
                 <mat-icon color="accent">done</mat-icon>
             </button>
         </td>
@@ -218,34 +217,12 @@
     <tr mat-row *matRowDef="let row; columns: displayedNewCowFormColumns"></tr>
 </table>
 
-<!-- <div>
-    Type: {{type.invalid }}
-    <hr>
-    Cow ID: {{cowId.invalid}}
-    <hr>
-    Animal ID: {{ animalId.invalid }}
-    <hr>
-    Event Id: {{eventId.invalid}}
-    <hr>
-    Animal Id: {{ animalId.invalid}}
-    <hr>
-    ageInDays: {{ageInDays.invalid}}
-    <hr>
-    Deletable: {{deletable.invalid}}
-    <hr>
-    lactationNumber: {{getJson(lactationNumber)}}
-    <hr>
-    daysInLactation: {{getJson(daysInLactation)}}
-    <hr>
-    startDateTime: {{getJson(startDateTime)}}
-    <hr>
-    reportingDateTime: {{getJson(reportingDateTime)}}
-    <hr>
-
-</div> -->
-
 <!-- Grid -->
-<table mat-table [dataSource]="cows" class="mat-elevation-z8">
+<h2 class="header">Cow grid</h2>
+<p>You can double-click any field in order to edit it. Press the edit (pencil symbol) to the right to submit</p>
+<p>In order to add a new cow press the add button (plus symbol) in the header's right corner.</p>
+
+<table mat-table [dataSource]="cows" class="mat-elevation-z8 grid">
     <!--- Note that these columns can be defined in any order.
         The actual rendered columns are set as a property on the row definition" -->
 
@@ -258,100 +235,284 @@
     <!-- Health index Column -->
     <ng-container matColumnDef="healthIndex">
         <th mat-header-cell *matHeaderCellDef>Health index</th>
-        <td mat-cell *matCellDef="let element">{{ element.healthIndex }}</td>
+        <td (dblclick)="dblClicked(element, 'healthIndex')" mat-cell *matCellDef="let element">
+            <ng-container
+                *ngIf="!dblClickedElement || (dblClickedElement.element !== element || dblClickedElement.field !== 'healthIndex')">
+                {{ element.healthIndex }}
+            </ng-container>
+            <ng-container
+                *ngIf="dblClickedElement && dblClickedElement.element === element && dblClickedElement.field === 'healthIndex'">
+                <mat-form-field>
+                    <input [value]="element.healthIndex" [(ngModel)]="element.healthIndex" matInput
+                        placeholder="Enter health index" [formControl]="healthIndex" />
+                </mat-form-field>
+            </ng-container>
+        </td>
     </ng-container>
 
     <!-- End date Column -->
     <ng-container matColumnDef="endDate">
         <th mat-header-cell *matHeaderCellDef>End date</th>
-        <td mat-cell *matCellDef="let element">
-            {{ element.endDate * 1000 | date: "medium" }}
+        <td (dblclick)="dblClicked(element, 'endDate')" mat-cell *matCellDef="let element">
+            <ng-container
+                *ngIf="!dblClickedElement || (dblClickedElement.element !== element || dblClickedElement.field !== 'endDate')">
+                {{ element.endDate * 1000 | date: "medium" }}
+            </ng-container>
+            <ng-container
+                *ngIf="dblClickedElement && dblClickedElement.element === element && dblClickedElement.field === 'endDate'">
+                <mat-icon matDatepickerToggleIcon (click)="cancelUpdateCow()" class="clear" color="accent">clear
+                </mat-icon>
+                <mat-form-field>
+                    <mat-label>Choose end date</mat-label>
+                    <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="element.endDate"
+                        [value]="element.endDate" required />
+                    <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #endDatePicker></mat-datepicker>
+                    <mat-error *ngIf="endDate.invalid">
+                        {{getRequiredErrorMessage("endDate")}}
+                    </mat-error>
+                </mat-form-field>
+            </ng-container>
         </td>
     </ng-container>
 
     <!-- Min value datetime Column -->
     <ng-container matColumnDef="minValueDateTime">
         <th mat-header-cell *matHeaderCellDef>Min value datetime</th>
-        <td mat-cell *matCellDef="let element">
-            {{ element.minValueDateTime * 1000 | date: "medium" }}
+        <td (dblclick)="dblClicked(element, 'minValueDateTime')" mat-cell *matCellDef="let element">
+            <ng-container
+                *ngIf="!dblClickedElement || (dblClickedElement.element !== element || dblClickedElement.field !== 'minValueDateTime')">
+                {{ element.minValueDateTime * 1000 | date: "medium" }}
+            </ng-container>
+            <ng-container
+                *ngIf="dblClickedElement && dblClickedElement.element === element && dblClickedElement.field === 'minValueDateTime'">
+                <mat-icon matDatepickerToggleIcon (click)="cancelUpdateCow()" class="clear" color="accent">clear
+                </mat-icon>
+                <mat-form-field>
+                    <mat-label>Choose min value date</mat-label>
+                    <input matInput [matDatepicker]="minValueDateTimePicker" [(ngModel)]="element.minValueDateTime"
+                        [value]="element.minValueDateTime" required />
+                    <mat-datepicker-toggle matSuffix [for]="minValueDateTimePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #minValueDateTimePicker></mat-datepicker>
+                    <mat-error *ngIf="minValueDateTime.invalid">
+                        {{getRequiredErrorMessage("minValueDateTime")}}
+                    </mat-error>
+                </mat-form-field>
+            </ng-container>
         </td>
     </ng-container>
 
     <!-- Type Column -->
     <ng-container matColumnDef="type">
         <th mat-header-cell *matHeaderCellDef>Type</th>
-        <td mat-cell *matCellDef="let element">{{ element.type }}</td>
+        <td (dblclick)="dblClicked(element, 'type')" mat-cell *matCellDef="let element">
+            <ng-container
+                *ngIf="!dblClickedElement || (dblClickedElement.element !== element || dblClickedElement.field !== 'type')">
+                {{ element.type }}
+            </ng-container>
+            <ng-container
+                *ngIf="dblClickedElement && dblClickedElement.element === element && dblClickedElement.field === 'type'">
+                <mat-form-field>
+                    <input [value]="element.type" [(ngModel)]="element.type" matInput placeholder="Enter type"
+                        [formControl]="type" />
+                </mat-form-field>
+            </ng-container>
+        </td>
     </ng-container>
 
     <!-- Cow ID Column -->
     <ng-container matColumnDef="cowId">
         <th mat-header-cell *matHeaderCellDef>Cow ID</th>
-        <td mat-cell *matCellDef="let element">{{ element.cowId }}</td>
+        <td (dblclick)="dblClicked(element, 'cowId')" mat-cell *matCellDef="let element">
+            <ng-container
+                *ngIf="!dblClickedElement || (dblClickedElement.element !== element || dblClickedElement.field !== 'cowId')">
+                {{ element.cowId }}
+            </ng-container>
+            <ng-container
+                *ngIf="dblClickedElement && dblClickedElement.element === element && dblClickedElement.field === 'cowId'">
+                <mat-form-field>
+                    <input [value]="element.cowId" [(ngModel)]="element.cowId" matInput placeholder="Enter cow ID"
+                        [formControl]="cowId" />
+                </mat-form-field>
+            </ng-container>
+        </td>
     </ng-container>
 
     <!-- Animal ID Column -->
     <ng-container matColumnDef="animalId">
         <th mat-header-cell *matHeaderCellDef>Animal ID</th>
-        <td mat-cell *matCellDef="let element">{{ element.animalId }}</td>
+        <td (dblclick)="dblClicked(element, 'animalId')" mat-cell *matCellDef="let element">
+            <ng-container
+                *ngIf="!dblClickedElement || (dblClickedElement.element !== element || dblClickedElement.field !== 'animalId')">
+                {{ element.animalId }}
+            </ng-container>
+            <ng-container
+                *ngIf="dblClickedElement && dblClickedElement.element === element && dblClickedElement.field === 'animalId'">
+                <mat-form-field>
+                    <input [value]="element.animalId" [(ngModel)]="element.animalId" matInput
+                        placeholder="Enter animal ID" [formControl]="animalId" />
+                </mat-form-field>
+            </ng-container>
+        </td>
     </ng-container>
 
     <!-- Event ID Column -->
     <ng-container matColumnDef="eventId">
         <th mat-header-cell *matHeaderCellDef>Event ID</th>
+        <td (dblclick)="dblClicked(element, 'eventId')" mat-cell *matCellDef="let element">
+            <ng-container
+                *ngIf="!dblClickedElement || (dblClickedElement.element !== element || dblClickedElement.field !== 'eventId')">
+                {{ element.eventId }}
+            </ng-container>
+            <ng-container
+                *ngIf="dblClickedElement && dblClickedElement.element === element && dblClickedElement.field === 'eventId'">
+                <mat-form-field>
+                    <input [value]="element.eventId" [(ngModel)]="element.eventId" matInput placeholder="Enter event ID"
+                        [formControl]="eventId" />
+                </mat-form-field>
+            </ng-container>
+        </td>
         <td mat-cell *matCellDef="let element">{{ element.eventId }}</td>
     </ng-container>
 
     <!-- Deletable Column -->
     <ng-container matColumnDef="deletable">
         <th mat-header-cell *matHeaderCellDef>Deletable</th>
-        <td mat-cell *matCellDef="let element">{{ element.deletable }}</td>
+        <td (dblclick)="dblClicked(element, 'deletable')" mat-cell *matCellDef="let element">
+            <ng-container
+                *ngIf="!dblClickedElement || (dblClickedElement.element !== element || dblClickedElement.field !== 'deletable')">
+                {{ element.deletable }}
+            </ng-container>
+            <ng-container
+                *ngIf="dblClickedElement && dblClickedElement.element === element && dblClickedElement.field === 'deletable'">
+                <mat-form-field>
+                    <mat-select matInput ([value])="element.deletable" [formControl]="deletable"
+                        [(ngModel)]="element.deletable" placeholder="Select if deletable">
+                        <mat-option value="1">True</mat-option>
+                        <mat-option value="0">False</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="deletable.invalid">
+                        {{getRequiredErrorMessage("deletable")}}
+                    </mat-error>
+                </mat-form-field>
+            </ng-container>
+        </td>
     </ng-container>
 
     <!-- Lactation Number Column -->
     <ng-container matColumnDef="lactationNumber">
         <th mat-header-cell *matHeaderCellDef>Lactation Number</th>
-        <td mat-cell *matCellDef="let element">
-            {{ element.lactationNumber }}
+        <td (dblclick)="dblClicked(element, 'lactationNumber')" mat-cell *matCellDef="let element">
+            <ng-container
+                *ngIf="!dblClickedElement || (dblClickedElement.element !== element || dblClickedElement.field !== 'lactationNumber')">
+                {{ element.lactationNumber }}
+            </ng-container>
+            <ng-container
+                *ngIf="dblClickedElement && dblClickedElement.element === element && dblClickedElement.field === 'lactationNumber'">
+                <mat-form-field>
+                    <input [value]="element.lactationNumber" [(ngModel)]="element.lactationNumber" matInput
+                        placeholder="Enter lactation number" [formControl]="lactationNumber" />
+                </mat-form-field>
+            </ng-container>
         </td>
     </ng-container>
 
     <!-- Days in Lactation Column -->
     <ng-container matColumnDef="daysInLactation">
         <th mat-header-cell *matHeaderCellDef>Days in Lactation</th>
-        <td mat-cell *matCellDef="let element">
-            {{ element.daysInLactation }}
+        <td (dblclick)="dblClicked(element, 'daysInLactation')" mat-cell *matCellDef="let element">
+            <ng-container
+                *ngIf="!dblClickedElement || (dblClickedElement.element !== element || dblClickedElement.field !== 'daysInLactation')">
+                {{ element.daysInLactation }}
+            </ng-container>
+            <ng-container
+                *ngIf="dblClickedElement && dblClickedElement.element === element && dblClickedElement.field === 'daysInLactation'">
+                <mat-form-field>
+                    <input [value]="element.daysInLactation" [(ngModel)]="element.daysInLactation" matInput
+                        placeholder="Enter days in lactation" [formControl]="daysInLactation" />
+                </mat-form-field>
+            </ng-container>
         </td>
     </ng-container>
 
     <!-- Age in days Column -->
     <ng-container matColumnDef="ageInDays">
         <th mat-header-cell *matHeaderCellDef>Age in days</th>
-        <td mat-cell *matCellDef="let element">
-            {{ element.ageInDays }}
+        <td (dblclick)="dblClicked(element, 'ageInDays')" mat-cell *matCellDef="let element">
+            <ng-container
+                *ngIf="!dblClickedElement || (dblClickedElement.element !== element || dblClickedElement.field !== 'ageInDays')">
+                {{ element.ageInDays }}
+            </ng-container>
+            <ng-container
+                *ngIf="dblClickedElement && dblClickedElement.element === element && dblClickedElement.field === 'ageInDays'">
+                <mat-form-field>
+                    <input [value]="element.ageInDays" [(ngModel)]="element.ageInDays" matInput
+                        placeholder="Enter age in days" [formControl]="ageInDays" />
+                </mat-form-field>
+            </ng-container>
         </td>
     </ng-container>
 
     <!-- Start datetime Column -->
     <ng-container matColumnDef="startDateTime">
         <th mat-header-cell *matHeaderCellDef>Start datetime</th>
-        <td mat-cell *matCellDef="let element">
-            {{ element.startDateTime * 1000 | date: "medium" }}
+        <td (dblclick)="dblClicked(element, 'startDateTime')" mat-cell *matCellDef="let element">
+            <ng-container
+                *ngIf="!dblClickedElement || (dblClickedElement.element !== element || dblClickedElement.field !== 'startDateTime')">
+                {{ element.startDateTime * 1000 | date: "medium" }}
+            </ng-container>
+            <ng-container
+                *ngIf="dblClickedElement && dblClickedElement.element === element && dblClickedElement.field === 'startDateTime'">
+                <mat-icon matDatepickerToggleIcon (click)="cancelUpdateCow()" class="clear" color="accent">clear
+                </mat-icon>
+                <mat-form-field>
+                    <mat-label>Choose start date</mat-label>
+                    <input matInput [matDatepicker]="startDateTimePicker" [(ngModel)]="element.startDateTime"
+                        [value]="element.startDateTime" required />
+                    <mat-datepicker-toggle matSuffix [for]="startDateTimePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #startDateTimePicker></mat-datepicker>
+                    <mat-error *ngIf="startDateTime.invalid">
+                        {{getRequiredErrorMessage("startDateTime")}}
+                    </mat-error>
+                </mat-form-field>
+            </ng-container>
         </td>
     </ng-container>
 
     <!-- Reporting datetime Column -->
     <ng-container matColumnDef="reportingDateTime">
         <th mat-header-cell *matHeaderCellDef>Reporting datetime</th>
-        <td mat-cell *matCellDef="let element">
-            {{ element.reportingDateTime * 1000 | date: "medium" }}
+        <td (dblclick)="dblClicked(element, 'reportingDateTime')" mat-cell *matCellDef="let element">
+            <ng-container
+                *ngIf="!dblClickedElement || (dblClickedElement.element !== element || dblClickedElement.field !== 'reportingDateTime')">
+                {{ element.reportingDateTime * 1000 | date: "medium" }}
+            </ng-container>
+            <ng-container
+                *ngIf="dblClickedElement && dblClickedElement.element === element && dblClickedElement.field === 'reportingDateTime'">
+                <mat-icon matDatepickerToggleIcon (click)="cancelUpdateCow()" class="clear" color="accent">clear
+                </mat-icon>
+                <mat-form-field>
+                    <mat-label>Choose reporting date</mat-label>
+                    <input matInput [matDatepicker]="reportingDateTimePicker" [(ngModel)]="element.reportingDateTime"
+                        [value]="element.reportingDateTime" required />
+                    <mat-datepicker-toggle matSuffix [for]="reportingDateTimePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #reportingDateTimePicker></mat-datepicker>
+                    <mat-error *ngIf="reportingDateTime.invalid">
+                        {{getRequiredErrorMessage("reportingDateTime")}}
+                    </mat-error>
+                </mat-form-field>
+            </ng-container>
         </td>
     </ng-container>
 
     <!-- Edit Column -->
     <ng-container matColumnDef="edit">
         <th mat-header-cell *matHeaderCellDef>Edit</th>
-        <td mat-cell *matCellDef="let element" (click)="editCow(element.id)">
-            <mat-icon color="accent">edit</mat-icon>
+        <td mat-cell *matCellDef="let element">
+            <mat-icon [color]="dblClickedElement && dblClickedElement.element === element ? 'primary' : 'accent'"
+                (click)="editCow(element)">
+                edit
+            </mat-icon>
         </td>
     </ng-container>
 

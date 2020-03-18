@@ -4,7 +4,6 @@ import { CowsService } from "./cows.service";
 import { MatTableDataSource } from "@angular/material/table";
 import { Validators, FormControl } from "@angular/forms";
 import { inspect } from "util";
-import { subscribeOn } from "rxjs/operators";
 
 const addCow = (): Partial<ICow>[] => {
     return [
@@ -37,6 +36,7 @@ export class CowsComponent implements OnInit {
     @Output() cancelAddCowForm = new EventEmitter();
     cows = new MatTableDataSource<ICow>();
     newCows = new MatTableDataSource<Partial<ICow>>(addCow());
+    dblClickedElement = null;
 
     // Add Cow form fields with error messages
     healthIndex = new FormControl("");
@@ -56,6 +56,7 @@ export class CowsComponent implements OnInit {
     displayedGridColumns: string[] = [
         "id",
         "healthIndex",
+        "startDateTime",
         "endDate",
         "minValueDateTime",
         "type",
@@ -66,13 +67,13 @@ export class CowsComponent implements OnInit {
         "lactationNumber",
         "daysInLactation",
         "ageInDays",
-        "startDateTime",
         "reportingDateTime",
         "edit",
         "delete"
     ];
     displayedNewCowFormColumns: string[] = [
         "healthIndex",
+        "startDateTime",
         "endDate",
         "minValueDateTime",
         "type",
@@ -83,7 +84,6 @@ export class CowsComponent implements OnInit {
         "lactationNumber",
         "daysInLactation",
         "ageInDays",
-        "startDateTime",
         "reportingDateTime",
         "submit",
         "cancel"
@@ -101,19 +101,45 @@ export class CowsComponent implements OnInit {
         });
     }
 
-    public editCow(id: number) {
-        // this.delete.emit(cow);
+    public addCow(newCow: ICow) {
+        newCow = this.sanitizeCow(newCow);
+        this.cowsService.postCow(newCow).subscribe(
+            _ => {
+                this.cancelAddCowForm.emit();
+                // refresh data in the grid
+                this.getCows();
+            },
+            error => {
+                // TODO: Here we can create pop-up message for failed addition
+                console.error(error);
+            }
+        );
+    }
+
+    public editCow(updatedCow: ICow) {
+        updatedCow = this.sanitizeCow(updatedCow);
+        this.cowsService.patchCow(updatedCow).subscribe(
+            _ => {
+                this.cancelUpdateCow();
+                // refresh data in the grid
+                this.getCows();
+            },
+            error => {
+                // TODO: Here we can create pop-up message for failed update
+                console.error(error);
+            }
+        );
     }
 
     public deleteCow(id: number) {
         // TODO: Here the pop-up asking confirmation could be used
         this.cowsService.deleteCow(id).subscribe(
             data => {
-                // refresh data in the table
+                // refresh data in the grid
                 this.getCows();
             },
             error => {
-                // Here we can create message for failed deletion
+                // TODO: Here we can create pop-up message for failed deletion
                 console.error(error);
             }
         );
@@ -125,24 +151,49 @@ export class CowsComponent implements OnInit {
             : "";
     }
 
-    public submitAddCowForm(newCow: ICow) {
-        this.cowsService.postCow(newCow).subscribe(
-            data => {
-                this.cancelAddCowForm.emit();
-                this.getCows();
-            },
-            error => {
-                // Here we can create message for failed update
-                console.error(error);
-            }
-        );
-    }
-
     public cancelAddCow() {
         this.cancelAddCowForm.emit();
     }
 
     public getJson(el: any) {
         return inspect(el);
+    }
+
+    public dblClicked(element: ICow, field: string) {
+        this.dblClickedElement = { element, field };
+    }
+
+    public cancelUpdateCow() {
+        this.dblClickedElement = null;
+    }
+
+    public sanitizeCow(cow: ICow) {
+        return {
+            ...cow,
+            healthIndex: cow.healthIndex ? +cow.healthIndex : cow.healthIndex,
+            endDate:
+                cow.endDate && typeof cow.endDate !== "number"
+                    ? new Date(cow.endDate).getTime() / 1000
+                    : cow.endDate,
+            minValueDateTime:
+                cow.minValueDateTime && typeof cow.minValueDateTime !== "number"
+                    ? new Date(cow.minValueDateTime).getTime() / 1000
+                    : cow.minValueDateTime,
+            cowId: +cow.cowId,
+            eventId: +cow.eventId,
+            deletable: !!+cow.deletable,
+            lactationNumber: +cow.lactationNumber,
+            daysInLactation: +cow.daysInLactation,
+            ageInDays: +cow.ageInDays,
+            startDateTime:
+                cow.startDateTime && typeof cow.startDateTime !== "number"
+                    ? new Date(cow.startDateTime).getTime() / 1000
+                    : cow.startDateTime,
+            reportingDateTime:
+                cow.reportingDateTime &&
+                typeof cow.reportingDateTime !== "number"
+                    ? new Date(cow.reportingDateTime).getTime() / 1000
+                    : cow.reportingDateTime
+        };
     }
 }

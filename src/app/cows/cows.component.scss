@@ -1,6 +1,12 @@
-.add-cow-form-header {
+.header {
     text-align: center;
     padding-top: 2rem;
+}
+
+p {
+    font-size: 1rem;
+    text-align: center;
+    color: darkcyan;
 }
 
 table {
@@ -12,9 +18,25 @@ table {
     }
     &.add-cow-form {
         padding-bottom: 3rem;
+        .mat-form-field {
+            max-width: 120px;
+        }
     }
-    .mat-form-field {
-        max-width: 120px;
+    &.grid {
+        .mat-form-field-wrapper {
+            width: 50px;
+        }
+        td {
+            position: relative;
+            .mat-icon {
+                &.clear {
+                    position: absolute;
+                    top: 12px;
+                    right: 0px;
+                    cursor: pointer;
+                }
+            }
+        }
     }
 }
 
