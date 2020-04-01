@@ -1,8 +1,12 @@
 # GridAngular
 
+This project is the outcome of the test task assigned to me by one of the potential employers. The description of the task is in the root of this project in the `test_task_description.pdf`.
+
+The task completion took me about 18 hours. It included reading the documentation on certain Angular aspects, such as interceptor and finding some other solutions published on the Internet, given at the time of this writing I worked very little with Angular in the past two years.
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.0.2.
 
-## Development server
+## Development server instructions
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
